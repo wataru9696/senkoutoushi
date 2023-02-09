@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>購入商品計算</title>
+    <meta charset="UTF-8">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" th:href="@{/css/materialize/materialize.min.css}" href="../static/css/materialize.min.css" media="screen,projection" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="../static/css/style.css">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+    <form th:action="@{/calculate}" method="post" name="calculate-form">
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <h1>購入商品計算</h1>
+                </div>
+            </div>
+            <div class="row">
+                <!-- card -->
+                <div class="col s12">
+                    <div class="card light-blue lighten-4">
+                        <div class="card-content">
+                            <span class="card-title">使い方</span>
+                            <p>①一致させたい合計金額（税抜）を「100円単位で」入力</p>
+                            <p>②各商品ごとに、購入したい個数を入力</p>
+                            <p>　（ⅰ）個数が一意に決まっている場合は、最小個数・最大個数にその数を指定（購入したくない場合は、最大個数に0を指定）</p>
+                            <p>　（ⅱ）一定の範囲内に収めたい場合は、その範囲を最小個数・最大個数に指定</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- totalPrice -->
+                <div class="input-field col s6">
+                    <input id="total-price" type="text" value="139000" th:field="${products.totalPrice}">
+                    <label for="total-price">合計金額（税抜）</label>
+                </div>
+            </div>
+            <div class="col s12 grey lighten-1 productList-area">
+                <div class="row">
+                    <!-- productList -->
+                    <div class="col s4 font-weight-bold">商品名</div>
+                    <div class="col s2 font-weight-bold">価格（税抜）</div>
+                    <div class="col s6 font-weight-bold">購入数（最低個数～最大個数）</div>
+                </div>
+                <hr>
+                <div th:each="product, stat : ${products.list}" class="row flex align-items-center">
+                    <div class="col s4 p-name">
+                        <div th:text="${product.productType.label}"></div>
+                        <img th:src="@{/img/__${stat.count}__-1.jpg}" width="120" height="120">
+                        <img th:if="${stat.count eq 1 or stat.count eq 2 or stat.count eq 4 or stat.count eq 5}" th:src="@{/img/__${stat.count}__-2.jpg}" width="120" height="120">
+                    </div>
+
+                    <input type="hidden" name="productName" th:value="${product.productType.label}">
+                    <div th:text="'￥' + ${product.productType.price}" class="col s2 p-price"></div>
+                    <div class="input-field col s2">
+                        <input type="text" class="validate p-min-num" th:id="'p' + ${stat.count} + '-min-num'" th:field="${products.list[__${stat.index}__].minNum}">
+                        <label th:for="'p' + ${stat.count} + '-min-num'">最低個数</label>
+                    </div>
+                    <div class="col s1">～</div>
+                    <div class="input-field col s2">
+                        <input type="text" class="p-max-num validate" th:id="'p' + ${stat.count} + '-max-num'" th:field="${products.list[__${stat.index}__].maxNum}">
+                        <label th:for="'p' + ${stat.count} + '-max-num'">最大個数</label>
+                    </div>
+                    <p>
+                        <label>
+                            <input type="checkbox" th:value="${stat.count}" class="check" />
+                            <span>なし</span>
+                        </label>
+                    </p>
+                </div>
+            </div>
+            <!-- calculateButton -->
+            <div class="row">
+                <div class="col s2 offset-s10 flex justify-content-flex-end">
+                    <button class="btn waves-effect waves-light" id="calculateButton" type="submit" name="action">
+                        <i class="material-icons right">get_app</i>出力
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" th:src="@{/js/materialize/materialize.min.js}" src="../static/js/materialize/materialize.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/main.js}" src="../static/js/main.js"></script>
+</body>
+
+</html>
